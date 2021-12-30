@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="windows-1252" ?>
+<!-- 
+     build.xml for the incredible Loader tool
+     
+     Dec 29 2021    Initial
+
+-->
+<project default="help">
+    <property file="./build.properties"/>
+    <import file="./libs.xml"/>
+    <!-- 
+     Menu
+    -->
+    <target name="help">
+        <echo message="-----> Available Targets "></echo>
+        <echo message="-----> "></echo>
+        <echo message="-----> .......... cett           : Compile encryption testing tool"></echo>
+        <echo message="-----> "></echo>
+    </target>
+
+    <!-- *******************************************************************************************************-->
+    <!-- The encryption testing tool   -->
+    <!-- *******************************************************************************************************-->
+    <target name="cett" >
+        <echo message="-----> Shoot Class files from ${bld.dir}/cett"></echo>
+        <delete dir="${runtime.home}/cett"/>
+        <delete dir="${bld.dir}/cett"/>
+        <mkdir dir="${bld.dir}/cett"/>
+        <mkdir dir="${runtime.home}/cett"/>
+        <echo message="-----> Compile Java classes from ${javasources.dir}/cett"></echo>
+        <javac srcdir="${javasources.dir}/" destdir="${bld.dir}/cett" classpathref="classpath"
+               debug="${javac.debug}" nowarn="${javac.nowarn}" source="1.8" target="1.8"
+               deprecation="${javac.deprecation}" encoding="Cp1252">
+            <include name="**/cett.java"/>
+        </javac>
+        <jar destfile="${runtime.home}/cett/cett.jar" basedir="${bld.dir}/cett">
+            <manifest>
+                <attribute name="Main-Class" value="org.mouserabbit.tools.cett"/>
+                <attribute name="Class-Path"
+                           value=". ./jlibs/utilities.jar ./jlibs/xmlparserv2.jar ./jlibs/log4j-1.2.13-2.jar"/>
+                <attribute name="Built-By" value="${user.name}"/>
+                <attribute name="Specification-Title" value="cett"/>
+                <attribute name="Specification-Version" value="${build.version}"/>
+                <attribute name="Specification-Vendor" value="Mouserabbit"/>
+                <attribute name="Implementation-Version" value="${build.version} ${TODAY}"/>
+                <attribute name="Implementation-Vendor" value="Mouserabbit"/>
+            </manifest>
+        </jar>
+        <copy todir="${runtime.home}/cett/jlibs" verbose="true">
+            <fileset dir="${libs.home}/XML" includes="xmlparserv2.jar"/>
+            <fileset dir="${libs.home}/LOG4J" includes="log4j-1.2.13-2.jar"/>
+            <fileset dir="${libs.home}/UTILITIES" includes="utilities.jar"/>
+        </copy>
+        <zip destfile="${runtime.home}/cett.zip">
+            <fileset dir="${runtime.home}/cett" casesensitive="true" includes="**/**"/>
+        </zip>
+    </target>
+        
+    <!-- *******************************************************************************************************-->
+    <!--  Generic deploy task for a jar file  -->
+    <!-- *******************************************************************************************************-->
+    <target name="deploy">
+        <sshexec host="${remote.host}" username="${remote.hostaccount}" command="rm -f ${remote.dir}/**/*.sql"
+                 password="${remote.accountpass}" trust="true" verbose="false"/>
+        <sshexec host="${remote.host}" username="${remote.hostaccount}" command="rm -f ${remote.dir}/**/*.xml"
+                 password="${remote.accountpass}" trust="true" verbose="false"/>
+        <echo message="-----> Copy the ${zipfile} file to ${remote.host}"></echo>
+        <scp todir="${remote.hostaccount}@${remote.host}:${remote.dir}" password="${remote.accountpass}" trust="true"
+             verbose="${copy.verbosemode}">
+            <fileset dir="${runtime.home}">
+                <include name="${zipfile}"/>
+            </fileset>
+        </scp>
+        <scp todir="${remote.hostaccount}@${remote.host}:${remote.dir}" password="${remote.accountpass}" trust="true"
+             verbose="${copy.verbosemode}">
+            <fileset dir="${log4jsources.dir}">
+                <include name="log4j-unix.xml"/>
+            </fileset>
+        </scp>
+        <echo message="-----> Unzip ${zipfile} on ${remote.host}"></echo>
+        <sshexec host="${remote.host}" username="${remote.hostaccount}"
+                 command="unzip -o ${remote.dir}/${zipfile} -d ${remote.dir}" password="${remote.accountpass}"
+                 trust="true" verbose="${zip.verbosemode}"/>
+        <sshexec host="${remote.host}" username="${remote.hostaccount}" command="rm -f ${remote.dir}/${zipfile}"
+                 password="${remote.accountpass}" trust="true" verbose="false"/>
+        <sshexec host="${remote.host}" username="${remote.hostaccount}"
+                 command="mv ${remote.dir}/log4j-unix.xml ${remote.dir}/log4j.xml" password="${remote.accountpass}"
+                 trust="true" verbose="false"/>
+        <sshexec command="chmod +x ${remote.dir}/*.sh ${remote.dir}/*.sh" host="${remote.host}"
+                 username="${remote.hostaccount}" password="${remote.accountpass}" trust="true"
+                 verbose="${copy.verbosemode}"/>
+    </target>
+    
+    <!-- *******************************************************************************************************-->
+    <!-- Local copy of log4j.xml -->
+    <!-- *******************************************************************************************************-->
+    <target name="log4j">
+        <echo message="-----> Update the common log4j file."></echo>
+        <copy verbose="true" todir="${runtime.home}">
+            <fileset dir="${log4jsources.dir}" includes="log4j-windows.xml"/>
+        </copy>
+        <move file="${runtime.home}/log4j-windows.xml" tofile="${runtime.home}/log4j.xml"/>
+    </target>
+</project>

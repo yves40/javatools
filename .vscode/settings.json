@@ -1,0 +1,12 @@
+{
+  "ant.home": "d:\\TOOLS\\apache-ant-1.9.14",
+  "ant.buildFilenames": "build.xml",
+  "ant.buildFileDirectories": "./src/build",
+  "java.project.sourcePaths": ["src"],
+  "java.project.outputPath": "bin",
+  "java.project.referencedLibraries": [
+    "lib/**/*.jar",
+    "d:\\ALL-LIBS\\UTILITIES\\utilities.jar",
+    "d:\\ALL-LIBS\\LOG4J\\log4j-1.2.13-2.jar"
+  ]
+}

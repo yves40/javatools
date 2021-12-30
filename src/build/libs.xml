@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="windows-1252" ?>
+<!-- 
+     libs.xml
+     
+     May 15 2007    Initial
+     Jun 01 2007    Add the OC4J internal lib...
+     Sep 17 2013    FY14 reorg
+     Feb 18 2019    Vscode
+
+-->
+
+<project name="Utilities-libs" default="all" basedir="." xmlns:oracle="antlib:oracle">
+
+     <path id="library.LOG4J">
+          <pathelement location="${libs.home}/LOG4J/log4j-1.2.13-2.jar"/>
+     </path>
+
+     <path id="library.Oracle.JDBC">
+          <pathelement location="${libs.home}/JDBC/ojdbc7.jar"/>
+          <pathelement location="${libs.home}/JDBC/orai18n.jar"/>
+          <pathelement location="${libs.home}/JDBC/ojdl.jar"/>
+          <pathelement location="${libs.home}/JDBC/dms.jar"/>
+     </path>
+
+     <path id="library.Oracle.XML.Parser.v2">
+          <pathelement location="${libs.home}/XML/xmlparserv2.jar"/>
+          <pathelement location="${libs.home}/XML/xml.jar"/>
+     </path>
+
+     <path id="library.myjava.utilities">
+          <pathelement location="${libs.home}/UTILITIES/utilities.jar"/>
+     </path>
+     
+     <path id="classpath">
+          <path refid="library.LOG4J"/>
+          <path refid="library.myjava.utilities"/>
+          <path refid="library.Oracle.JDBC"/>
+          <path refid="library.Oracle.XML.Parser.v2"/>
+     </path>
+
+</project>

@@ -17,6 +17,7 @@
      Mar 21 2008    Bring back to mouserabbit perimeter
      Dec 29 2021    cett revival in vscode ;-)
                     Improved log4j.xml search
+     Dec 30 2021    Changed !! log4j.xml search !!
 ---------------------------------------------------------------------------------------------------*/ 
 
 
@@ -43,7 +44,6 @@ import java.security.Provider;
 import java.security.Security;
 
 import java.util.Enumeration;
-import java.util.StringTokenizer;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import javax.crypto.CipherOutputStream;
@@ -52,8 +52,6 @@ import javax.crypto.spec.SecretKeySpec;
 import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;
 import javax.crypto.CipherInputStream;
-
-import java.io.File;
 
 import javax.crypto.SecretKey;
 
@@ -103,11 +101,11 @@ import org.apache.log4j.xml.DOMConfigurator;
            Key                 key = null;
            IvParameterSpec     iv = null;
 
-           log.info("cett " + Version);
            try
            {
-                // log4jpath = getMyLogger();
-                // Analyze command line  
+                // Analyze command line. This includes the localization of log4j.xml
+                // and log4j configuration
+                // If debugging, you must set -log4j in the launch.json params
                 ProcessCommandLine(args);
                 log.info(Version);
                 //
@@ -128,7 +126,7 @@ import org.apache.log4j.xml.DOMConfigurator;
                            * security.provider.3=cryptix.jce.provider.CryptixCrypto
                            * security.provider.4=�
                            */
-                          Enumeration en = provider.propertyNames();
+                          Enumeration<?> en = provider.propertyNames();
                           String propertyname = null;
                           while(en.hasMoreElements()) {
                                propertyname = (String)en.nextElement();
@@ -330,53 +328,6 @@ import org.apache.log4j.xml.DOMConfigurator;
            }
 
            return strbuf.toString();
-      }
-      /*-----------------------------------------------------------------------------------------
-           Some code to get an Apache logger
-           Scans the class path and searches for a file named:
-           <classname>log4j.xml
-      -------------------------------------------------------------------------------------------*/
-      private String getMyLogger() throws Exception
-      {
-           //
-           //   Searching for my log4j.xml file
-           //   Basic search, scanning directories in classpath and locating
-           //   a log4j.xml file
-           //
-           StringTokenizer tokenizer = 
-                new StringTokenizer(System.getProperty("java.class.path"), 
-                                         File.pathSeparator, false);
-           String dap = null;
-           String fullyqualifiedlog4jpath = null;
-           
-           while ( tokenizer.hasMoreTokens() ) {
-                String classpathElement = tokenizer.nextToken();
-                File classpathFile = new File(classpathElement);
-                if ( classpathFile.isDirectory() ) {
-                     dap = classpathFile.getAbsolutePath();
-                     File fap = new File(dap + File.separator + "log4j.xml");
-                     if(fap.exists()) 
-                     {
-                          fullyqualifiedlog4jpath = fap.getAbsolutePath();
-                          break;
-                     }
-                }
-           }
-           if(fullyqualifiedlog4jpath == null) {  // No log4j.xml located in classpath
-                                                  // try alternate command line method :  -Dlog4j.config=log4j.xml
-               System.out.print("\n\n\n");
-               String logfile = System.getProperty("log4j.config");
-               if ( logfile == null ){
-                  System.out.print("You must set log4j.config environment variable on the command line\n");
-                  System.out.print("java -Dlog4j.config=\"YOURLOCATION\\log4j.xml\" -jar BaseConnect.jar\n");
-                  throw new Exception("log4j.config command line parameter not passed.");
-               }
-               DOMConfigurator.configure(System.getProperty("log4j.config"));
-               log = Logger.getLogger(cett.class.getName());
-               log.info(Version + " Starting");
-
-           } 
-           return fullyqualifiedlog4jpath;
       }
       /*-----------------------------------------------------------------------------------------
            Analyze command line arguments

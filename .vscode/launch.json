@@ -6,11 +6,23 @@
     "configurations": [
         {
             "type": "java",
-            "name": "cett with env",
+            "name": "cett Encrypt",
             "request": "launch",
             "mainClass": "org.mouserabbit.tools.cett",
             "projectName": "tools_2ef57014",
-            "args": [ "-log4j", "d:\\all-runtime\\log4j.xml" ],
+            "args": [ "-log4j", "d:\\all-runtime\\log4j.xml", "-e",
+                    "-k", "c:\\temp\\yves000001.key",
+                    "-i",  "c:\\temp\\toto.log", "-o", "c:\\temp\\toto.encoded"],
+        },
+        {
+            "type": "java",
+            "name": "cett Decrypt",
+            "request": "launch",
+            "mainClass": "org.mouserabbit.tools.cett",
+            "projectName": "tools_2ef57014",
+            "args": [ "-log4j", "d:\\all-runtime\\log4j.xml", "-d",
+                    "-k", "c:\\temp\\yves000001.key",
+                    "-i",  "c:\\temp\\toto.encoded", "-o", "c:\\temp\\toto.decoded"],
         },
     ]
 }

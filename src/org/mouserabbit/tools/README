@@ -1,0 +1,19 @@
+
+
+After so many years, I have to learn how VSCODE works with JAVA.
+15 years ago I used Oracle JDeveloper ;-)
+So I must understand how VSCODE manage java JRE, Java libs,...
+
+cett is an alias for : java -jar cett.jar $*
+
+Encrypt a file:
+
+cett -log4j log4j.xml -k c:\temp\mysecretkey.key  -e -i "c:\temp\input.pdf" -o "c:\temp\input-encrypted.pdf"
+
+To reverse your file encryption:
+
+cett -log4j log4j.xml -k c:\temp\mysecretkey.key  -d -i "c:\temp\input-encrypted.pdf" -o "c:\temp\input-decrypted.pdf
+
+After doing this check initial input file and final decrypted file are the same.
+Unfortunately I will not ship the jar file in GitHub, so you will miss one of my lib.
+
